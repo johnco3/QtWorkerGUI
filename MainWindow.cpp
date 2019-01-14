@@ -10,6 +10,10 @@ MainWindow::MainWindow(QWidget *parent)
     , mpController(std::make_unique<Controller>())
 {
     ui->setupUi(this);
+    connect(mpController.get(), &Controller::onWorkFinished, 
+        this, &MainWindow::workFinished);
+    connect(mpController.get(), &Controller::onWorkProgress, 
+        this, &MainWindow::updateValue);
 }
 
 MainWindow::~MainWindow()
@@ -17,12 +21,25 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_pushButton_clicked()
+void 
+MainWindow::closeEvent(QCloseEvent* /*event*/)
+{}
+
+void 
+MainWindow::on_pushButton_clicked()
 {
-    emit mpController->operate(100);
+    ui->statusBar->showMessage("reset", 1000);
+    emit mpController->operate(10);
 }
 
-void MainWindow::updateValue(int secsLeft)
+void 
+MainWindow::updateValue(int secsLeft)
 {
     ui->secondsLeft->setText(QString::number(secsLeft));
+}
+
+void 
+MainWindow::workFinished(const QString& rResult)
+{
+    ui->statusBar->showMessage(rResult);
 }

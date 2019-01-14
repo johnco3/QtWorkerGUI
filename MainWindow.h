@@ -26,9 +26,14 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private:
+    //! Override the default close event if we need to cleanup
+    void closeEvent(QCloseEvent *event) override;
+
 private slots:
     void on_pushButton_clicked();
     void updateValue(int secsLeft);
+    void workFinished(const QString& rResult);
 
 private:
     Ui::MainWindow *ui;

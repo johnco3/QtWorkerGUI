@@ -15,27 +15,40 @@
 // TYPEDEFS
 // FORWARD DECLARATIONS
 
-class Controller : public QObject
-{
+class Controller : public QObject {
     Q_OBJECT
     QThread workerThread;
 public:
-    Controller(/*MainWindow* mainWindow*/) {
+    Controller() {
         auto worker = new Worker;
         worker->moveToThread(&workerThread);
         connect(&workerThread, &QThread::finished, worker, &QObject::deleteLater);
         connect(this, &Controller::operate, worker, &Worker::doWork);
         connect(worker, &Worker::resultReady, this, &Controller::handleResults);
+        connect(worker, &Worker::progressUpdate, this, [this](int secsLeft) {
+            emit onWorkProgress(secsLeft);
+        });
+
+        connect(&workerThread, &QThread::finished, worker, &QObject::deleteLater);
+
+        // Stack Overflow End
         workerThread.start();
     }
+
     ~Controller() {
-        workerThread.quit();
-        workerThread.wait();
+        if (workerThread.isRunning()) {
+            workerThread.quit();
+            workerThread.wait();
+        }
     }
 public slots:
-    void handleResults(const QString &) {
-        // how do I update the mainWindow from here
+    void handleResults(const QString &result) {
+        // update the mainWindow with the final result
+        emit onWorkFinished(result);
     }
+
 signals:
+    void onWorkFinished(const QString&);
+    void onWorkProgress(int secsLeft);
     void operate(int);
 };

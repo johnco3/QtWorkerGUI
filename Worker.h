@@ -2,6 +2,7 @@
 
 // SYSTEM INCLUDES
 #include <QTimer>
+#include <QThread>
 #include <QObject>
 #include <QEventLoop>
 
@@ -19,22 +20,18 @@
 class Worker : public QObject
 {
     Q_OBJECT
-
 public slots:
     void doWork(int count)  {
-        QString result = "finished";
+        const QString result = "finished";
         // Event loop allocated in workerThread
-        // (non-main) thread affinity (as moveToThread)
-        // this is important as otherwise it would occur
-        // on the main thread.
         QEventLoop loop;
-        for (auto i=0; i< count; i++) {
-            // wait 1000 ms doing nothing...
+        for (auto remSecs = count; remSecs > 0; remSecs--) {
+            // wait 1000 ms doing nothing, not really sure why 
+            // I cannot simply do QThread::msleep(1000)
             QTimer::singleShot(1000, &loop, SLOT(quit()));
             // process any signals emitted above
             loop.exec();
-
-            emit progressUpdate(i);
+            emit progressUpdate(remSecs);
         }
         emit resultReady(result);
     }
