@@ -9,7 +9,7 @@ CONFIG   += c++1z
 QMAKE_CXXFLAGS += -wd4127 -wd4834
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = MyTestApp
+TARGET = QtWorkerGUI
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use

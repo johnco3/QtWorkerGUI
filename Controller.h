@@ -23,7 +23,7 @@ public:
         auto worker = new Worker;
         worker->moveToThread(&workerThread);
         connect(&workerThread, &QThread::finished, worker, &QObject::deleteLater);
-        connect(this, &Controller::operate, worker, &Worker::doWork);
+        connect(this, &Controller::requestWork, worker, &Worker::doWork);
         connect(worker, &Worker::resultReady, this, &Controller::handleResults);
         connect(worker, &Worker::progressUpdate, this, [this](int secsLeft) {
             emit onWorkProgress(secsLeft);
@@ -50,5 +50,5 @@ public slots:
 signals:
     void onWorkFinished(const QString&);
     void onWorkProgress(int secsLeft);
-    void operate(int);
+    void requestWork(int);
 };

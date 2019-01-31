@@ -25,7 +25,7 @@ public slots:
         const QString result = "finished";
         // Event loop allocated in workerThread
         QEventLoop loop;
-        for (auto remSecs = count; remSecs > 0; remSecs--) {
+        for (auto remSecs = count; remSecs >= 0; remSecs--) {
             // wait 1000 ms doing nothing, not really sure why 
             // I cannot simply do QThread::msleep(1000)
             QTimer::singleShot(1000, &loop, SLOT(quit()));

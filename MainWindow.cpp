@@ -28,14 +28,16 @@ MainWindow::closeEvent(QCloseEvent* /*event*/)
 void 
 MainWindow::on_pushButton_clicked()
 {
+    ui->secondsLeft->setText(QString());
     ui->statusBar->showMessage("reset", 1000);
-    emit mpController->operate(10);
+    emit mpController->requestWork(10);
 }
 
 void 
 MainWindow::updateValue(int secsLeft)
 {
-    ui->secondsLeft->setText(QString::number(secsLeft));
+    ui->secondsLeft->setText(
+        secsLeft> 0? QString::number(secsLeft) : "timeout!");
 }
 
 void 
